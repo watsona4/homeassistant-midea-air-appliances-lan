@@ -124,10 +124,16 @@ class ApplianceDiscoveryHelper:  # pylint: disable=too-many-instance-attributes
             f"Found previously unknown device {name} found on {new.address}."
             f" [Check it out.](/config/integrations)"
         )
-        self.hass.components.persistent_notification.async_create(
-            title=NAME,
-            message=msg,
-            notification_id=f"midea_unknown_{new.serial_number}",
+        self.hass.async_create_task(
+            self.hass.services.async_call(
+                "persistent_notification",
+                "create",
+                {
+                    "title": NAME,
+                    "message": msg,
+                    "notification_id": f"midea_unknown_{new.serial_number}",
+                },
+            )
         )
         return new_device
 
@@ -161,10 +167,16 @@ class ApplianceDiscoveryHelper:  # pylint: disable=too-many-instance-attributes
                     "name": known[CONF_NAME],
                     "address": new.address,
                 }
-                self.hass.components.persistent_notification.async_create(
-                    title=NAME,
-                    message=msg,
-                    notification_id=f"midea_wait_discovery_{new.serial_number}",
+                self.hass.async_create_task(
+                    self.hass.services.async_call(
+                        "persistent_notification",
+                        "create",
+                        {
+                            "title": NAME,
+                            "message": msg,
+                            "notification_id": f"midea_wait_discovery_{new.serial_number}",
+                        },
+                    )
                 )
                 known |= update
                 need_reload = True
@@ -201,10 +213,16 @@ class ApplianceDiscoveryHelper:  # pylint: disable=too-many-instance-attributes
                 "address": address,
             }
 
-            self.hass.components.persistent_notification.async_create(
-                title=NAME,
-                message=msg,
-                notification_id=f"midea_non_lan_discovery_{device.serial_number}",
+            self.hass.async_create_task(
+                self.hass.services.async_call(
+                    "persistent_notification",
+                    "create",
+                    {
+                        "title": NAME,
+                        "message": msg,
+                        "notification_id": f"midea_non_lan_discovery_{device.serial_number}",
+                    },
+                )
             )
 
     def _address_generator(self, batch_size: int = DISCOVERY_BATCH_SIZE):
